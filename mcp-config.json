@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "memory": {
+      "command": "bash",
+      "args": ["-c", "node \"$LOCAL_MEMORY_MCP/dist/index.js\""]
+    }
+  }
+}

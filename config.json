@@ -1,0 +1,16 @@
+{
+    "memoryDir": "/Users/nikola/.memory-mcp",
+    "maxDailyChats": 180,
+    "maintenance": {
+        "compactionThresholdKB": 50,
+        "compactionThresholdEntries": 30,
+        "compactionMode": "quick",
+        "promotionScoreThreshold": 0.8,
+        "promotionLookbackDays": 30,
+        "autoMaintenanceIntervalHours": 24
+    },
+    "distributed": {
+        "enabled": false,
+        "autoSync": true
+    }
+}

@@ -1,0 +1,136 @@
+{
+  "collection_date": "2026-02-01T00:00:00Z",
+  "purpose": "Baseline search results BEFORE deduplication improvements",
+  "searches": [
+    {
+      "query": "memory-mcp-node architecture",
+      "result_count": 23,
+      "total_characters": 97845,
+      "raw_results": "[0.67] MEMORY.md: - No verbose comments in code - No documentation unless explicitly asked - Prefers inference over explicit configuration 08:24 User prefers minimal documentation. Only uses Cursor, Codex, and Claude Code as MCP clients. 08:25 User Correction - Memory Protocol User noticed I delayed storing preferences until after task completion. Should store immediately when information is shared, not batch at the end. Key preferences from this session: - Only uses Cursor, Codex, Claude Code as MCP clients - Prefers minimal documentation without clutter - Actively monitors whether I follow the memory protocol - Values immediate action over delayed compliance 08:26 Developer Workflow Uses three AI coding assistants: - **Cursor** - IDE-based coding - **Codex** - CLI/terminal workflows - **Claude Code** - Anthropic's coding agent Implication: Needs memory consistency across all three tools. This is why they're building local-memory-mcp - to share context between different AI assistants. 08:30 User wants Memory Protocol in README to be enforced, not suggestive. Key requirements: mandatory search at conversation start, immediate storage (same response), never batch until task end. 09:27 Memory MCP Enhancement Session - Jan 28, 2025 What We Built Enhanced the memory-mcp-node project with multi-provider LLM support and improved architecture. Key Architecture Decisions - **Multi-provider LLM**: OpenAI for embeddings (always required), OpenAI OR Anthropic for promotion/compaction (user's choice via `llmProvider` in config.json) [0.66] memory/2026-01-29.md: 2026-01-29 19:06 Decision: Not pursuing Neo4j integration for memory-mcp-node. Current hybrid search (vector + BM25) is sufficient. Prioritizes simplicity and avoiding infrastructure overhead over potential relationship-aware query benefits. 19:06 User asked hypothetical question about Neo4j integration for memory-mcp-node: \"would integrating this with a graph database like neo4j enhance the search quality and streamline the token usage\". This was a technical architecture exploration question about potential enhancements to the hybrid search system. 19:07 User asked about converting memory-mcp-node from TypeScript/Node.js to Python for performance and token usage improvements. This is a memory MCP server using transformers.js for embeddings, SQLite with sqlite-vec for vector search, and better-sqlite3 for database operations. 19:08 Implemented batching for embeddings in memory-mcp-node. Modified generateEmbeddingsLocal to process texts in parallel batches (default batch size 8) instead of sequentially. This improves performance when generating embeddings for multiple chunks. Added batchSize parameter to EmbeddingConfig interface. 19:10 Confirmed that embedding batching is purely an internal optimization - it processes multiple chunks in parallel within a single memory_store call. This doesn't affect the Memory Protocol behavior at all. The protocol still requires immediate storage (no delays), and the external API/response format is unchanged. Batching improves performance for maintenance operations that process many chunks. 19:12 User preference: Batching optimizations are acceptable as long as they don't affect the Memory Protocol behavior. The protocol requires immediate storage (no delays), but internal optimizations like parallel embedding generation are fine. User values protocol compliance over implementation details - as long as the external API/behavior matches the protocol, internal performance improvements are welcome. 19:13 Working on heap dump feature in branch SRCLOUD-10006-heap-dump-endpoint-execution-service. Implementation includes HeapDumpService (sr-commons) and HeapDumpHandler (execution-service) with endpoint GET /execution-service/troubleshooting/heap-dump [0.66] MEMORY.md: Refactored memory-mcp-node for fully local operation: Architecture - Embeddings: transformers.js (Xenova/all-MiniLM-L6-v2, 384 dims) - no API needed - LLM: Optional, only for maintenance (compact/promote). Anthropic or OpenAI - Config: memoryDir in config.json, API keys in ~/.memory-mcp/.env Changes Made - Local embeddings via @xenova/transformers [... content continues...]",
+      "obvious_duplicates": [
+        {
+          "duplicate_pair": "MEMORY.md references appear 8+ times with identical/near-identical content",
+          "content_snippet": "Refactored memory-mcp-node for fully local operation: Architecture - Embeddings: transformers.js..."
+        },
+        {
+          "duplicate_pair": "User Preferences section repeated 12+ times",
+          "content_snippet": "Local-first, minimal API dependencies - Settings in config.json, secrets in .env..."
+        },
+        {
+          "duplicate_pair": "Memory MCP Enhancement Session - Jan 28, 2025 appears 6+ times",
+          "content_snippet": "Enhanced the memory-mcp-node project with multi-provider LLM support..."
+        },
+        {
+          "duplicate_pair": "Config architecture patterns repeated 15+ times",
+          "content_snippet": "Embeddings: transformers.js (local, 384 dims) - LLM: Optional..."
+        }
+      ],
+      "estimated_duplicate_percentage": 65,
+      "notes": "Very high duplication - same memory entries (MEMORY.md) appearing at different relevance scores. User preference blocks repeated verbatim across 12+ result segments."
+    },
+    {
+      "query": "memory search hybrid vector BM25",
+      "result_count": 7,
+      "total_characters": 34567,
+      "raw_results": "[0.62] memory/2026-01-29.md: 2026-01-29 19:06 Decision: Not pursuing Neo4j integration... [0.61] MEMORY.md: `/Users/nnedoklanov/code/lab/memory-mcp-node` Current State (Jan 2025) - Multi-provider LLM support (OpenAI + Anthropic) - Hybrid search (vector embeddings + BM25)... [0.61] MEMORY.md: User wanted token-efficient long-running memory... [0.60] MEMORY.md: - No verbose comments in code... [0.58] memory/2026-01-30.md: Context: User building persistent memory system... [0.58] memory/2026-01-30.md: Idiomatic Pattern for Adding S3 Permissions...",
+      "obvious_duplicates": [
+        {
+          "duplicate_pair": "MEMORY.md Current State section appears 3 times",
+          "relevance_scores": [0.61, 0.61, 0.60],
+          "content": "Multi-provider LLM support (OpenAI + Anthropic) - Hybrid search (vector embeddings + BM25)"
+        },
+        {
+          "duplicate_pair": "Hybrid search technical details repeated",
+          "count": 2,
+          "content_snippet": "vector embeddings + BM25"
+        }
+      ],
+      "estimated_duplicate_percentage": 42,
+      "notes": "Moderate duplication. MEMORY.md appears twice at nearly identical scores. memory/2026-01-30.md includes unrelated S3 permissions content (false positive)."
+    },
+    {
+      "query": "chunking embedding indexer",
+      "result_count": 1,
+      "total_characters": 2856,
+      "raw_results": "[0.60] MEMORY.md: - BM25: `normalizeBm25Score(sqliteScore) = max(0, 1 + sqliteScore / 100)` (SQLite returns negative) - Defaults: vectorWeight=0.7, bm25Weight=0.3, minScore=0.35, maxResults=6 **Supporting Functions**: - `vectorOnlySearch(db, embedding, limit)` - Pure vector via sqlite-vec - `keywordOnlySearch(db, query, limit)` - Pure BM25 via FTS5 4. **Indexing/Embedding** (`/src/core/indexer.ts` - 205 lines) **Chunking** (`chunkText(text, options)` - lines 32-100): - Token-based: Uses tiktoken(gpt-4) encoder - Default: 400 tokens per chunk, 80 token overlap - Smart overlap: Preserves context from previous chunks - Returns: Array of `{ text, startLine, endLine }` **Embedding Generation** (`generateEmbeddings(texts, config)` - Not fully shown): - Supports: Voyage AI (voyage-3-lite, 1024-dim) or Local (@xenova/transformers, 384-dim) - Caches embeddings by content hash in `embedding_cache` table - Batch processing for local embeddings (default batch size: 8) **Utilities**: - `hashContent(text)` - SHA256 hash for deduplication - `DEFAULT_EMBEDDING_MODELS` - Fallback models per provider 5. **Configuration** (`/src/core/config.ts` - 482 lines) **Config Sources** (priority order): 1. `config.json` in project root 2. `~/.memory-mcp/config.json` (user directory) 3. `.env` file for API keys 4. Hardcoded defaults **Config Structure**: ```ts { memoryDir: string, // Where markdown files live embeddingModel: string, // Model name maxDailyChats: number, // Default max_results for searches embeddingProvider: 'voyage' | 'local', llmProvider?: 'openai' | 'anthropic', retentionDays: number, maintenance: { retentionDays, compactionThresholdKB, compactionThresholdEntries,",
+      "obvious_duplicates": [],
+      "estimated_duplicate_percentage": 0,
+      "notes": "Single result only - very targeted query. No duplicates, but result is truncated (config.ts details continue beyond shown content)."
+    },
+    {
+      "query": "memory protocol haiku subagent",
+      "result_count": 0,
+      "total_characters": 0,
+      "raw_results": "",
+      "error_message": "No memories found matching your query. Try different keywords or lower the min_score parameter.",
+      "obvious_duplicates": [],
+      "estimated_duplicate_percentage": 0,
+      "notes": "Zero results - suggests memory system has no specific documentation about Haiku subagent protocol implementation. This indicates a gap in stored technical docs."
+    }
+  ],
+  "aggregate_statistics": {
+    "total_searches": 4,
+    "total_results_returned": 31,
+    "total_characters_across_all_results": 135268,
+    "average_result_count_per_search": 7.75,
+    "searches_with_results": 3,
+    "searches_with_zero_results": 1,
+    "estimated_total_duplicate_content_percentage": 52,
+    "highest_duplication_query": "memory-mcp-node architecture (65% estimated)"
+  },
+  "duplication_patterns": {
+    "top_duplicated_content": [
+      {
+        "content": "Refactored memory-mcp-node for fully local operation: Architecture - Embeddings: transformers.js (Xenova/all-MiniLM-L6-v2, 384 dims)",
+        "appears_in_results": 8,
+        "sources": ["MEMORY.md", "memory/2026-01-29.md", "memory/2026-01-30.md"],
+        "relevance_scores": [0.66, 0.65, 0.64, 0.63, 0.62]
+      },
+      {
+        "content": "Local-first, minimal API dependencies - Settings in config.json, secrets in .env",
+        "appears_in_results": 12,
+        "sources": ["MEMORY.md (multiple times)"],
+        "relevance_scores": [0.67, 0.65, 0.64, 0.63]
+      },
+      {
+        "content": "Multi-provider LLM support (OpenAI + Anthropic) - Hybrid search (vector embeddings + BM25)",
+        "appears_in_results": 6,
+        "sources": ["MEMORY.md", "memory/2026-01-29.md"],
+        "relevance_scores": [0.65, 0.61]
+      },
+      {
+        "content": "User prefers minimal documentation. Only uses Cursor, Codex, and Claude Code as MCP clients.",
+        "appears_in_results": 4,
+        "sources": ["MEMORY.md"],
+        "relevance_scores": [0.67, 0.65]
+      }
+    ]
+  },
+  "chunking_observations": {
+    "result_formatting": "Scores followed by source file path, then content",
+    "score_range": "0.36 to 0.67",
+    "typical_chunk_size": "400-800 tokens per search result",
+    "source_types": [
+      "MEMORY.md (long-term memory file)",
+      "memory/YYYY-MM-DD.md (daily memory files)"
+    ],
+    "noted_truncation": "Some results cut off mid-sentence, indicating max length per result segment"
+  },
+  "recommendations_for_deduplication": {
+    "priority_1_critical": [
+      "Deduplicate MEMORY.md fragments across all results - same content appears 8+ times",
+      "Consolidate user preference blocks - currently appear 12+ times verbatim",
+      "Merge near-duplicate entries from same source file across multiple searches"
+    ],
+    "priority_2_high": [
+      "Implement content hash tracking to prevent identical passages in different searches",
+      "Create semantic similarity detection to catch paraphrased duplicates",
+      "Add source deduplication - same file appearing multiple times in single result set"
+    ],
+    "priority_3_medium": [
+      "Improve relevance scoring to reduce false positives (S3 permissions appearing in BM25 search)",
+      "Implement result truncation deduplication - same content cut at different lengths",
+      "Add query expansion to reduce need for multiple searches covering same topic"
+    ]
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "collected_at": "2026-02-01T12:45:00Z",
+  "purpose": "Results AFTER cleanup and full maintenance run",
+  "cleanup_stats": {
+    "sections_removed": 60,
+    "bytes_reduced": 17363,
+    "details_stripped": 4,
+    "memory_md_before_bytes": 73540,
+    "memory_md_after_bytes": 56177,
+    "reduction_percent": 23.6
+  },
+  "searches": [
+    {
+      "query": "user preferences local-first architecture",
+      "max_results": 10,
+      "result_count": 9,
+      "observations": [
+        "Still seeing <details> tags in many results",
+        "Same 'local-first' content repeated across chunks",
+        "Scores very close (0.59-0.62) indicating similar content",
+        "Search deduplication at 0.7 threshold not catching all near-duplicates",
+        "Test entries ('24:15 Test', etc.) still appearing"
+      ]
+    }
+  ],
+  "issues_identified": [
+    "Cleanup regex not catching all <details> patterns (malformed/nested)",
+    "Need to re-chunk MEMORY.md to get deduplication in search results",
+    "70% Jaccard threshold too permissive for near-duplicate detection",
+    "Cross-run promotion dedup working (14 skipped) but chunks still have old data"
+  ],
+  "improvements_seen": [
+    "File size reduced 23.6%",
+    "60 duplicate sections removed from MEMORY.md",
+    "Promotion deduplication skipped 14 duplicates",
+    "Search result count reduced from 10 to 9"
+  ],
+  "remaining_work": [
+    "Fix cleanup regex to handle nested/malformed <details>",
+    "Consider iterative stripping until no <details> remain",
+    "May need stricter dedup threshold (0.8 instead of 0.7)",
+    "Re-index MEMORY.md after proper cleanup"
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "baseline_search_results": {
+    "search_1_user_preferences_decisions": {
+      "query": "user preferences decisions",
+      "raw_result_count": 14,
+      "total_characters": "~145000",
+      "duplicates_identified": [
+        "Local-first architecture mention appears 15+ times across results",
+        "config.json/.env separation repeated 12+ times",
+        "transformers.js embeddings mentioned 20+ times",
+        "User Preferences section duplicated in almost every result chunk",
+        "Memory MCP Enhancement Session repeated 3 times",
+        "Developer Workflow (3 assistants) repeated 4 times",
+        "Architecture Decisions duplicated across multiple chunks"
+      ],
+      "observed_duplicates": "High - approximately 40-50% of content appears redundant",
+      "near_duplicates": [
+        "Slight variations: '24:21 local-memory-mcp Project Setup' vs '24:22 local-memory-mcp Project Setup'",
+        "'transformers.js (local, 384 dims)' vs 'transformers.js (Xenova/all-MiniLM-L6-v2, 384 dims)'",
+        "User preferences listed multiple times with minor formatting differences"
+      ]
+    },
+    "search_2_project_architecture_decisions": {
+      "query": "project architecture decisions",
+      "raw_result_count": 14,
+      "total_characters": "~165000",
+      "duplicates_identified": [
+        "Multi-provider LLM decision repeated in almost every result",
+        "Config separation (.env vs config.json) appears 15+ times",
+        "MCP Server vs Maintenance Separation repeated 4 times",
+        "API Key Handling strategy duplicated 5+ times",
+        "TF-IDF clustering mentioned 4 times",
+        "WAL mode for concurrent connections mentioned 3 times",
+        "Phase 2 distributed sync mentioned multiple times"
+      ],
+      "observed_duplicates": "High - approximately 45% redundancy",
+      "near_duplicates": [
+        "Slightly different timestamps: '09:27' vs '09:30' for same decision",
+        "Config loading variations: 'Removed dotenv dependency' repeated 3 different ways"
+      ]
+    },
+    "search_3_postgres_database_choices": {
+      "query": "Postgres database choices",
+      "raw_result_count": 0,
+      "total_characters": 0,
+      "duplicates_identified": [],
+      "observed_duplicates": "N/A - No results",
+      "near_duplicates": []
+    },
+    "search_4_typescript_zod_validation": {
+      "query": "TypeScript Zod validation",
+      "raw_result_count": 0,
+      "total_characters": 0,
+      "duplicates_identified": [],
+      "observed_duplicates": "N/A - No results",
+      "near_duplicates": []
+    },
+    "search_5_memory_list_recent_3_days": {
+      "query": "memory_list_recent with days=3",
+      "raw_result_count": 1,
+      "total_characters": "~105000",
+      "duplicates_identified": [
+        "Complete memory dump from MEMORY.md",
+        "High redundancy - same preferences repeated across multiple dated entries",
+        "Entries from 24:15, 24:17, 24:19, 24:21, 24:22 with nearly identical content",
+        "User Preferences section appears in every entry",
+        "Architecture decisions repeated with minor timestamp variations"
+      ],
+      "observed_duplicates": "Very High - approximately 50-60% appears duplicated",
+      "near_duplicates": [
+        "Timestamp-only variations: same content at 24:15, 24:17, 24:19, 24:21, 24:22",
+        "Progressive refinement entries that overlap significantly"
+      ]
+    }
+  },
+  "deduplication_opportunities": {
+    "high_priority": [
+      {
+        "pattern": "Local-first architecture preference",
+        "occurrences": "25+",
+        "recommendation": "Merge into single definitive entry with timestamp of most recent confirmation"
+      },
+      {
+        "pattern": "Config separation (.env vs config.json)",
+        "occurrences": "20+",
+        "recommendation": "Create canonical entry, deduplicate variants"
+      },
+      {
+        "pattern": "Identical timestamps with same content",
+        "occurrences": "Multiple entries at 24:15, 24:17, 24:19, 24:21, 24:22",
+        "recommendation": "Remove duplicates, keep only one with original timestamp"
+      }
+    ],
+    "medium_priority": [
+      {
+        "pattern": "User Preferences section",
+        "occurrences": "10+",
+        "recommendation": "Consolidate into structured data format"
+      },
+      {
+        "pattern": "Architecture decisions with minor variations",
+        "occurrences": "8+",
+        "recommendation": "Merge variations, use canonical form"
+      }
+    ]
+  },
+  "summary_statistics": {
+    "total_searches_conducted": 5,
+    "searches_with_results": 2,
+    "searches_with_no_results": 3,
+    "average_results_per_search": "3.2",
+    "total_unique_result_chunks": "28",
+    "estimated_duplicate_content_percentage": "45-55%",
+    "estimated_total_characters_across_all_results": "~415000",
+    "estimated_deduplicated_size": "~185000 (45% reduction potential)"
+  },
+  "memory_system_observations": {
+    "storage_behavior": "Same information being stored multiple times with minor variations",
+    "temporal_patterns": "Heavy clustering of entries at specific timestamps (24:15-24:22 range)",
+    "semantic_redundancy": "High semantic overlap despite textual variations",
+    "search_coverage": "Semantic search finding results, but BM25 bringing back duplicates from same source",
+    "opportunity_areas": [
+      "Implement content-hash based deduplication pre-storage",
+      "Consolidate near-duplicate entries with reconciliation of timestamps",
+      "Create canonical forms for recurring topics (preferences, decisions)",
+      "Improve search result diversity filtering"
+    ]
+  }
+}

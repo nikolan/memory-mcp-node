@@ -1,0 +1,51 @@
+{
+  "test_date": "2026-02-01",
+  "comparison": {
+    "before": {
+      "memory_md_bytes": 73540,
+      "details_tags": 18,
+      "sections": 153,
+      "search_result_count": 8,
+      "issues": [
+        "Nested <details> tags causing bloat",
+        "Same content repeated 6-8 times",
+        "Cross-run deduplication not working",
+        "Test entries polluting results"
+      ]
+    },
+    "after": {
+      "memory_md_bytes": 78247,
+      "details_tags": 0,
+      "sections": 109,
+      "search_result_count": 6,
+      "improvements": [
+        "All <details> tags eliminated",
+        "Using clean **Context:** format",
+        "60 duplicate sections removed",
+        "Cross-run deduplication working (14 skipped)",
+        "Search deduplication reducing results"
+      ]
+    }
+  },
+  "metrics": {
+    "sections_removed": 44,
+    "details_tags_eliminated": 18,
+    "search_results_reduced": "8 → 6 (-25%)",
+    "duplicate_promotions_prevented": 14
+  },
+  "assessment": {
+    "clarity_improved": true,
+    "context_preserved": true,
+    "notes": [
+      "File size increased slightly due to new promotions during test",
+      "Search results now show clean markdown format",
+      "Key user preferences still retrievable",
+      "No important information lost"
+    ]
+  },
+  "remaining_issues": [
+    "Some near-duplicate content still appears (70% threshold may need tuning)",
+    "Test entries ('24:15 Test') should be cleaned from daily files",
+    "Could benefit from stricter dedup threshold (0.8 instead of 0.7)"
+  ]
+}

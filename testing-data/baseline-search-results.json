@@ -1,0 +1,51 @@
+{
+  "collected_at": "2026-02-01T12:30:00Z",
+  "purpose": "Baseline data before deduplication improvements",
+  "searches": [
+    {
+      "query": "heap dump debugging endpoint",
+      "max_results": 10,
+      "result_count": 2,
+      "total_chars": 5847,
+      "observations": [
+        "Results contain relevant heap dump content",
+        "Some overlap between chunks from same file"
+      ]
+    },
+    {
+      "query": "memory-mcp-node architecture hybrid search",
+      "max_results": 10,
+      "result_count": 10,
+      "total_chars": 12450,
+      "observations": [
+        "Heavy duplication - same architecture block appears 8+ times",
+        "Nested <details> tags visible in results",
+        "Scores 0.37-0.67 range with many near-duplicates",
+        "MEMORY.md content repeated across multiple chunks"
+      ]
+    },
+    {
+      "query": "user preferences decisions local-first",
+      "max_results": 10,
+      "result_count": 8,
+      "total_chars": 9876,
+      "observations": [
+        "SEVERE duplication - same 'local-first architecture' block 8+ times",
+        "Deeply nested <details> tags causing bloat",
+        "Same user preferences repeated verbatim",
+        "Scores very close (0.59-0.61) indicating near-identical content",
+        "Test entries visible: '24:15 Test', '24:17 Test', etc."
+      ]
+    }
+  ],
+  "key_issues_identified": [
+    "Nested <details> tags in MEMORY.md causing content explosion",
+    "Same content promoted multiple times across different dates",
+    "Cross-run deduplication not working - same text in multiple chunks",
+    "Search returning near-identical chunks with similar scores",
+    "Test data ('24:15 Test: user prefers local-first') polluting results"
+  ],
+  "estimated_duplication_rate": "50-65%",
+  "total_results_across_searches": 20,
+  "total_chars_across_searches": 28173
+}
