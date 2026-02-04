@@ -197,14 +197,20 @@ function deduplicateResults(
   return kept;
 }
 
+// RRF constant - controls how quickly rank contribution decays
+const RRF_K = 60;
+
+// Bonus for top-ranked results (creates decisive confidence gaps)
+const TOP_RANK_BONUS = 0.05;
+
 /**
  * Hybrid search combining vector similarity and BM25 keyword matching
  *
- * Algorithm:
+ * Algorithm (RRF + Top-Rank Bonus):
  * 1. Run vector search and BM25 search in parallel (fetch 3x maxResults each)
- * 2. Merge results by chunk ID
- * 3. Calculate combined score: vectorWeight * vectorScore + bm25Weight * bm25Score
- * 4. Sort by combined score descending
+ * 2. Build rank maps for each search type
+ * 3. Calculate RRF score: 1/(k+rank_vector) + 1/(k+rank_bm25)
+ * 4. Add bonus for #1 rank in either search (+0.05 each)
  * 5. Deduplicate near-identical results
  * 6. Filter by minScore
  * 7. Return top maxResults
@@ -225,6 +231,13 @@ export async function hybridSearch(
     Promise.resolve(keywordOnlySearch(db, query, fetchLimit)),
   ]);
 
+  // Build rank maps (1-indexed ranks)
+  const vectorRankMap = new Map<string, number>();
+  const bm25RankMap = new Map<string, number>();
+
+  vectorResults.forEach((r, i) => vectorRankMap.set(r.id, i + 1));
+  bm25Results.forEach((r, i) => bm25RankMap.set(r.id, i + 1));
+
   // Merge results by chunk ID
   const resultMap = new Map<string, SearchResult>();
 
@@ -237,12 +250,8 @@ export async function hybridSearch(
   for (const result of bm25Results) {
     const existing = resultMap.get(result.id);
     if (existing) {
-      // Combine scores for duplicate entries
+      // Preserve BM25 score and conflict metadata
       existing.bm25Score = result.bm25Score;
-      existing.score =
-        opts.vectorWeight * existing.vectorScore +
-        opts.bm25Weight * existing.bm25Score;
-      // Preserve conflict metadata from whichever result has it
       if (result.supersededBy) existing.supersededBy = result.supersededBy;
       if (result.supersedes) existing.supersedes = result.supersedes;
       if (result.conflictReason) existing.conflictReason = result.conflictReason;
@@ -251,33 +260,36 @@ export async function hybridSearch(
     }
   }
 
-  // Convert map to array and sort by combined score
+  // Calculate RRF scores with Top-Rank Bonus
   const mergedResults = Array.from(resultMap.values());
 
-  // For results that only have one type of score, calculate the combined score
   for (const result of mergedResults) {
-    if (result.vectorScore === 0 && result.bm25Score > 0) {
-      // Only BM25 score
-      result.score = opts.bm25Weight * result.bm25Score;
-    } else if (result.bm25Score === 0 && result.vectorScore > 0) {
-      // Only vector score
-      result.score = opts.vectorWeight * result.vectorScore;
-    } else if (result.vectorScore > 0 && result.bm25Score > 0) {
-      // Both scores
-      result.score =
-        opts.vectorWeight * result.vectorScore +
-        opts.bm25Weight * result.bm25Score;
-    }
+    const vectorRank = vectorRankMap.get(result.id);
+    const bm25Rank = bm25RankMap.get(result.id);
+
+    // RRF: 1/(k+rank) for each search type, 0 if not present
+    const rrfVector = vectorRank ? 1 / (RRF_K + vectorRank) : 0;
+    const rrfBm25 = bm25Rank ? 1 / (RRF_K + bm25Rank) : 0;
+
+    let score = rrfVector + rrfBm25;
+
+    // Top-Rank Bonus: +0.05 for being #1 in either search
+    if (vectorRank === 1) score += TOP_RANK_BONUS;
+    if (bm25Rank === 1) score += TOP_RANK_BONUS;
+
+    result.score = score;
   }
 
-  // Sort by score descending
+  // Sort by RRF score descending
   const sorted = mergedResults.sort((a, b) => b.score - a.score);
 
   // Deduplicate near-identical results
   const deduplicated = deduplicateResults(sorted, 0.7);
 
   // Filter by minScore and return top maxResults
+  // Note: RRF scores are typically smaller (0.01-0.15 range), so we scale minScore
+  const scaledMinScore = opts.minScore * 0.1; // 0.35 -> 0.035
   return deduplicated
-    .filter(result => result.score >= opts.minScore)
+    .filter(result => result.score >= scaledMinScore)
     .slice(0, opts.maxResults);
 }
